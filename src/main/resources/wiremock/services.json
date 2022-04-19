@@ -1,0 +1,8 @@
+{
+  "services" : [ {
+    "id" : "59mw6",
+    "name" : "author-service",
+    "port" : 8000,
+    "rootDir" : "author-service"
+  } ]
+}

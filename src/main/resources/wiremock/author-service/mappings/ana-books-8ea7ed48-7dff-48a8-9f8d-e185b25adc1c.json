@@ -1,0 +1,19 @@
+{
+  "id" : "8ea7ed48-7dff-48a8-9f8d-e185b25adc1c",
+  "name" : "Ana Books",
+  "request" : {
+    "url" : "/v1/authors/5/books",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "[\r\n  {\r\n    \"id\": 6,\r\n    \"title\":\"Abrazileirando o Inglês.\"\r\n  },\r\n  {\r\n    \"id\": 22,\r\n    \"title\":\"Quem é o Confluence perto do caderninho da Ana?\"\r\n  }\r\n]\r\n\r\n",
+    "headers" : {
+      "Content-Type" : "application/json"
+    }
+  },
+  "uuid" : "8ea7ed48-7dff-48a8-9f8d-e185b25adc1c",
+  "persistent" : true,
+  "priority" : 5,
+  "insertionIndex" : 13
+}

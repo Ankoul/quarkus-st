@@ -1,0 +1,19 @@
+{
+  "id" : "36d49787-476f-472d-bf5e-368986d00576",
+  "name" : "Pedro Books ",
+  "request" : {
+    "url" : "/v1/authors/8/books",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "[\r\n  {\r\n    \"id\": 9,\r\n    \"title\":\"Amor e vinho: da poesia luso-árabe à nova música portuguesa : séculos XI-XXI\"\r\n  },\r\n  {\r\n    \"id\": 10,\r\n    \"title\":\"O exterminador de bugs.\"\r\n  }\r\n]\r\n\r\n",
+    "headers" : {
+      "Content-Type" : "application/json"
+    }
+  },
+  "uuid" : "36d49787-476f-472d-bf5e-368986d00576",
+  "persistent" : true,
+  "priority" : 5,
+  "insertionIndex" : 16
+}

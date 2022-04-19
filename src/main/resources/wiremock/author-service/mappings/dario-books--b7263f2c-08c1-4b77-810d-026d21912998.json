@@ -1,0 +1,19 @@
+{
+  "id" : "b7263f2c-08c1-4b77-810d-026d21912998",
+  "name" : "Dario Books ",
+  "request" : {
+    "url" : "/v1/authors/12/books",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "[\r\n  {\r\n    \"id\": 16,\r\n    \"title\":\"O cantarolar da rola a dale com força.\"\r\n  },\r\n  {\r\n    \"id\": 17,\r\n    \"title\":\"3 anos sem sair do quarto.\"\r\n  }\r\n]\r\n\r\n",
+    "headers" : {
+      "Content-Type" : "application/json"
+    }
+  },
+  "uuid" : "b7263f2c-08c1-4b77-810d-026d21912998",
+  "persistent" : true,
+  "priority" : 5,
+  "insertionIndex" : 20
+}

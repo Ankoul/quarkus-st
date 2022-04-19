@@ -1,0 +1,19 @@
+{
+  "id" : "123db3e9-e6af-4f63-b98d-ab8bb400567e",
+  "name" : "Willian Books",
+  "request" : {
+    "url" : "/v1/authors/1/books",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "[\n  {\n    \"id\": 1,\n    \"title\":\"Freddy & Eu\"\n  },\n  {\n    \"id\": 2,\n    \"title\":\"Seu cachorro e você: A história de uma conexão única\"\n  }\n]\n\n",
+    "headers" : {
+      "Content-Type" : "application/json"
+    }
+  },
+  "uuid" : "123db3e9-e6af-4f63-b98d-ab8bb400567e",
+  "persistent" : true,
+  "priority" : 5,
+  "insertionIndex" : 9
+}
