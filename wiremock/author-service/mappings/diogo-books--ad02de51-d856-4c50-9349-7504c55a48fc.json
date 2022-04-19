@@ -1,0 +1,19 @@
+{
+  "id" : "ad02de51-d856-4c50-9349-7504c55a48fc",
+  "name" : "Diogo Books ",
+  "request" : {
+    "url" : "/v1/authors/9/books",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "[\r\n  {\r\n    \"id\": 11,\r\n    \"title\":\"A Brasileira infiel.\"\r\n  },\r\n  {\r\n    \"id\": 12,\r\n    \"title\":\"Só os tuga sabem amar.\"\r\n  },\r\n  {\r\n    \"id\": 20,\r\n    \"title\":\"50 tons de Hubert.\"\r\n  }\r\n]\r\n\r\n",
+    "headers" : {
+      "Content-Type" : "application/json"
+    }
+  },
+  "uuid" : "ad02de51-d856-4c50-9349-7504c55a48fc",
+  "persistent" : true,
+  "priority" : 5,
+  "insertionIndex" : 17
+}

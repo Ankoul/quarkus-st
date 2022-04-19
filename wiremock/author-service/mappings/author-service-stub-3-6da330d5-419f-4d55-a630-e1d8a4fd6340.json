@@ -1,0 +1,19 @@
+{
+  "id" : "6da330d5-419f-4d55-a630-e1d8a4fd6340",
+  "name" : "Joao Books",
+  "request" : {
+    "url" : "/v1/authors/2/books",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "[\r\n  {\r\n    \"id\": 3,\r\n    \"title\":\"Se Beber, Não Case!\"\r\n  },\r\n  {\r\n    \"id\": 4,\r\n    \"title\":\"Como apertar botões do elevador.\"\r\n  },\r\n  {\r\n    \"id\": 21,\r\n    \"title\":\"Como criar microserviços usando apenas CSS.\"\r\n  }\r\n]\r\n\r\n",
+    "headers" : {
+      "Content-Type" : "application/json"
+    }
+  },
+  "uuid" : "6da330d5-419f-4d55-a630-e1d8a4fd6340",
+  "persistent" : true,
+  "priority" : 5,
+  "insertionIndex" : 10
+}
