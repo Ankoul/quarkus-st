@@ -7,6 +7,7 @@ import com.example.quarkus.book.entity.Book;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -64,7 +65,28 @@ public class BookResourceTest {
     }
 
     @Test
-    @Order(2)
+    @Order(3)
+    public void listBooksShouldNotBeEmpty() {
+        final List<Book> books = given()
+                .when().get(BOOKS_PATH)
+                .then()
+                .statusCode(200)
+                .extract().body().jsonPath().getList(".", Book.class);
+
+        Assertions.assertTrue(books.stream().anyMatch(it -> it.getTitle().equals(TITLE) && it.getAuthor().equals(AUTHOR)));
+    }
+
+    @Test
+    @Order(4)
+    public void getShouldReturnNotFound() {
+        given()
+                .when().get(BOOKS_PATH + "/999999")
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
+    @Order(5)
     public void booksShouldThrowErrorForInvalidAuthor() throws JsonProcessingException {
         final Book request = new Book();
         request.setTitle(TITLE);
@@ -99,24 +121,172 @@ public class BookResourceTest {
     }
 
     @Test
-    @Order(3)
-    public void listBooksShouldNotBeEmpty() {
-        final List<Book> books = given()
+    @Order(6)
+    public void titleShouldNotHaveMoreThan30Characters() throws JsonProcessingException {
+        final Book request = new Book();
+        final String title50CharLength = RandomStringUtils.randomAlphabetic(50);
+        request.setTitle(title50CharLength);
+        request.setAuthor(AUTHOR);
+
+        given()
+                .when()
+                .header("Content-Type", "application/json")
+                .body(objectMapper.writeValueAsString(request))
+                .post(BOOKS_PATH)
+                .then()
+                .statusCode(400);
+
+        List<Book> books = given()
                 .when().get(BOOKS_PATH)
                 .then()
                 .statusCode(200)
                 .extract().body().jsonPath().getList(".", Book.class);
 
-        Assertions.assertTrue(books.stream().anyMatch(it -> it.getTitle().equals(TITLE) && it.getAuthor().equals(AUTHOR)));
+        Assertions.assertTrue(books.stream().noneMatch(it -> it.getTitle().equals(title50CharLength)));
+
+        final Book book = books.stream().findAny().orElseThrow();
+        book.setTitle(title50CharLength);
+        given()
+                .when()
+                .header("Content-Type", "application/json")
+                .body(objectMapper.writeValueAsString(book))
+                .put(BOOKS_PATH + "/" + book.getId())
+                .then()
+                .statusCode(400);
+
+        books = given()
+                .when().get(BOOKS_PATH)
+                .then()
+                .statusCode(200)
+                .extract().body().jsonPath().getList(".", Book.class);
+
+        Assertions.assertTrue(books.stream().noneMatch(it -> it.getTitle().equals(title50CharLength)));
     }
 
     @Test
-    @Order(4)
-    public void getShouldReturnNotFound() {
+    @Order(7)
+    public void titleShouldNotBeNull() throws JsonProcessingException {
+        final Book request = new Book();
+        request.setTitle(null);
+        request.setAuthor(AUTHOR);
+
         given()
-                .when().get(BOOKS_PATH + "/999999")
+                .when()
+                .header("Content-Type", "application/json")
+                .body(objectMapper.writeValueAsString(request))
+                .post(BOOKS_PATH)
                 .then()
-                .statusCode(404);
+                .statusCode(400);
+
+        List<Book> books = given()
+                .when().get(BOOKS_PATH)
+                .then()
+                .statusCode(200)
+                .extract().body().jsonPath().getList(".", Book.class);
+
+        Assertions.assertTrue(books.stream().noneMatch(it -> it.getTitle() == null));
+
+        final Book book = books.stream().findAny().orElseThrow();
+        book.setTitle(null);
+        given()
+                .when()
+                .header("Content-Type", "application/json")
+                .body(objectMapper.writeValueAsString(book))
+                .put(BOOKS_PATH + "/" + book.getId())
+                .then()
+                .statusCode(400);
+
+        books = given()
+                .when().get(BOOKS_PATH)
+                .then()
+                .statusCode(200)
+                .extract().body().jsonPath().getList(".", Book.class);
+
+        Assertions.assertTrue(books.stream().noneMatch(it -> it.getTitle() == null));
     }
 
+    @Test
+    @Order(8)
+    public void titleShouldNotBeEmpty() throws JsonProcessingException {
+        final Book request = new Book();
+        request.setTitle("");
+        request.setAuthor(AUTHOR);
+
+        given()
+                .when()
+                .header("Content-Type", "application/json")
+                .body(objectMapper.writeValueAsString(request))
+                .post(BOOKS_PATH)
+                .then()
+                .statusCode(400);
+
+        List<Book> books = given()
+                .when().get(BOOKS_PATH)
+                .then()
+                .statusCode(200)
+                .extract().body().jsonPath().getList(".", Book.class);
+
+        Assertions.assertTrue(books.stream().noneMatch(it -> it.getTitle().equals("")));
+
+        final Book book = books.stream().findAny().orElseThrow();
+        book.setTitle("");
+        given()
+                .when()
+                .header("Content-Type", "application/json")
+                .body(objectMapper.writeValueAsString(book))
+                .put(BOOKS_PATH + "/" + book.getId())
+                .then()
+                .statusCode(400);
+
+        books = given()
+                .when().get(BOOKS_PATH)
+                .then()
+                .statusCode(200)
+                .extract().body().jsonPath().getList(".", Book.class);
+
+        Assertions.assertTrue(books.stream().noneMatch(it -> it.getTitle().equals("")));
+    }
+
+    @Test
+    @Order(9)
+    public void titleShouldNotBeBlank() throws JsonProcessingException {
+        final Book request = new Book();
+        final String blank = "    ";
+        request.setTitle(blank);
+        request.setAuthor(AUTHOR);
+
+        given()
+                .when()
+                .header("Content-Type", "application/json")
+                .body(objectMapper.writeValueAsString(request))
+                .post(BOOKS_PATH)
+                .then()
+                .statusCode(400);
+
+        List<Book> books = given()
+                .when().get(BOOKS_PATH)
+                .then()
+                .statusCode(200)
+                .extract().body().jsonPath().getList(".", Book.class);
+
+        Assertions.assertTrue(books.stream().noneMatch(it -> it.getTitle().equals(blank)));
+
+        final Book book = books.stream().findAny().orElseThrow();
+        book.setTitle(blank);
+        given()
+                .when()
+                .header("Content-Type", "application/json")
+                .body(objectMapper.writeValueAsString(book))
+                .put(BOOKS_PATH + "/" + book.getId())
+                .then()
+                .statusCode(400);
+
+        books = given()
+                .when().get(BOOKS_PATH)
+                .then()
+                .statusCode(200)
+                .extract().body().jsonPath().getList(".", Book.class);
+
+        Assertions.assertTrue(books.stream().noneMatch(it -> it.getTitle().equals(blank)));
+    }
 }

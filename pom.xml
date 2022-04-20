@@ -16,6 +16,7 @@
         <quarkus.platform.version>2.8.0.Final</quarkus.platform.version>
         <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
         <wiremock.version>2.27.2</wiremock.version>
+        <apache.commons.version>3.12.0</apache.commons.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -60,6 +61,11 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest-client-jackson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${apache.commons.version}</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
