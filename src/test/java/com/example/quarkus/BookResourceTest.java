@@ -124,10 +124,19 @@ public class BookResourceTest {
     @Order(6)
     public void titleShouldNotHaveMoreThan30Characters() throws JsonProcessingException {
         final Book request = new Book();
-        final String title50CharLength = RandomStringUtils.randomAlphabetic(50);
-        request.setTitle(title50CharLength);
+        request.setTitle(RandomStringUtils.randomAlphabetic(30));
         request.setAuthor(AUTHOR);
 
+        given()
+                .when()
+                .header("Content-Type", "application/json")
+                .body(objectMapper.writeValueAsString(request))
+                .post(BOOKS_PATH)
+                .then()
+                .statusCode(200);
+
+        final String title50CharLength = RandomStringUtils.randomAlphabetic(50);
+        request.setTitle(title50CharLength);
         given()
                 .when()
                 .header("Content-Type", "application/json")
@@ -167,9 +176,18 @@ public class BookResourceTest {
     @Order(7)
     public void titleShouldNotBeNull() throws JsonProcessingException {
         final Book request = new Book();
-        request.setTitle(null);
+        request.setTitle(RandomStringUtils.randomAlphabetic(30));
         request.setAuthor(AUTHOR);
 
+        given()
+                .when()
+                .header("Content-Type", "application/json")
+                .body(objectMapper.writeValueAsString(request))
+                .post(BOOKS_PATH)
+                .then()
+                .statusCode(200);
+
+        request.setTitle(null);
         given()
                 .when()
                 .header("Content-Type", "application/json")
@@ -209,9 +227,18 @@ public class BookResourceTest {
     @Order(8)
     public void titleShouldNotBeEmpty() throws JsonProcessingException {
         final Book request = new Book();
-        request.setTitle("");
+        request.setTitle("test");
         request.setAuthor(AUTHOR);
 
+        given()
+                .when()
+                .header("Content-Type", "application/json")
+                .body(objectMapper.writeValueAsString(request))
+                .post(BOOKS_PATH)
+                .then()
+                .statusCode(200);
+
+        request.setTitle("");
         given()
                 .when()
                 .header("Content-Type", "application/json")
@@ -251,10 +278,19 @@ public class BookResourceTest {
     @Order(9)
     public void titleShouldNotBeBlank() throws JsonProcessingException {
         final Book request = new Book();
-        final String blank = "    ";
-        request.setTitle(blank);
+        request.setTitle("test");
         request.setAuthor(AUTHOR);
 
+        given()
+                .when()
+                .header("Content-Type", "application/json")
+                .body(objectMapper.writeValueAsString(request))
+                .post(BOOKS_PATH)
+                .then()
+                .statusCode(200);
+
+        final String blank = "    ";
+        request.setTitle(blank);
         given()
                 .when()
                 .header("Content-Type", "application/json")
