@@ -135,8 +135,8 @@ public class BookResourceTest {
                 .then()
                 .statusCode(200);
 
-        final String title50CharLength = RandomStringUtils.randomAlphabetic(50);
-        request.setTitle(title50CharLength);
+        final String title31CharLength = RandomStringUtils.randomAlphabetic(31);
+        request.setTitle(title31CharLength);
         given()
                 .when()
                 .header("Content-Type", "application/json")
@@ -151,10 +151,10 @@ public class BookResourceTest {
                 .statusCode(200)
                 .extract().body().jsonPath().getList(".", Book.class);
 
-        Assertions.assertTrue(books.stream().noneMatch(it -> it.getTitle().equals(title50CharLength)));
+        Assertions.assertTrue(books.stream().noneMatch(it -> it.getTitle().equals(title31CharLength)));
 
         final Book book = books.stream().findAny().orElseThrow();
-        book.setTitle(title50CharLength);
+        book.setTitle(title31CharLength);
         given()
                 .when()
                 .header("Content-Type", "application/json")
@@ -169,7 +169,7 @@ public class BookResourceTest {
                 .statusCode(200)
                 .extract().body().jsonPath().getList(".", Book.class);
 
-        Assertions.assertTrue(books.stream().noneMatch(it -> it.getTitle().equals(title50CharLength)));
+        Assertions.assertTrue(books.stream().noneMatch(it -> it.getTitle().equals(title31CharLength)));
     }
 
     @Test
