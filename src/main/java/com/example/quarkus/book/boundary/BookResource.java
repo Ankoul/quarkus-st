@@ -4,6 +4,7 @@ import com.example.quarkus.book.control.BookController;
 import com.example.quarkus.book.entity.Book;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -37,7 +38,7 @@ public class BookResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Book create(Book book) {
+    public Book create(@Valid Book book) {
         return bookController.create(book);
     }
 
@@ -45,7 +46,7 @@ public class BookResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Book update(@PathParam("id") Long id, Book book) {
+    public Book update(@PathParam("id") Long id, @Valid Book book) {
         return bookController.update(id, book);
     }
 

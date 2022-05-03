@@ -1,10 +1,13 @@
 package com.example.quarkus.book.entity;
 
+import org.hibernate.validator.constraints.Length;
+
 import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 public class Book {
@@ -12,6 +15,9 @@ public class Book {
     @Id
     @GeneratedValue
     private Long id;
+
+    @NotBlank
+    @Length(max = 30)
     private String title;
     private String author;
 
