@@ -1,4 +1,4 @@
-package com.example.quarkus;
+package com.example.quarkus.book;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.Response;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.codehaus.plexus.util.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -66,7 +67,7 @@ public class BookResourceTest {
     @Test
     @Order(3)
     public void listBooksShouldNotBeEmpty() {
-        final List<Book> books = listBooks();
+        final List<Book> books = listAllBooks();
 
         Assertions.assertTrue(books.stream()
                 .anyMatch(it -> it.getTitle().equals(VALID_TITLE) && it.getAuthor().equals(VALID_AUTHOR)));
@@ -92,7 +93,7 @@ public class BookResourceTest {
         request.setAuthor(invalidName);
         createBook(request).then().statusCode(400);
 
-        final List<Book> books = listBooks();
+        final List<Book> books = listAllBooks();
 
         Assertions.assertTrue(books.stream().noneMatch(it -> it.getAuthor().equals(VALID_AUTHOR.toLowerCase())));
         Assertions.assertTrue(books.stream().noneMatch(it -> it.getAuthor().equals(invalidName)));
@@ -127,7 +128,7 @@ public class BookResourceTest {
         request.setTitle(invalidTitle);
         createBook(request).then().statusCode(400);
 
-        List<Book> books = listBooks();
+        List<Book> books = listAllBooks();
 
         Assertions.assertTrue(books.stream().noneMatch(it -> it.getTitle().equals(invalidTitle)));
 
@@ -138,7 +139,7 @@ public class BookResourceTest {
 
         updateBook(book).then().statusCode(400);
 
-        books = listBooks();
+        books = listAllBooks();
 
         Assertions.assertTrue(books.stream().noneMatch(it -> it.getTitle().equals(invalidTitle)));
     }
@@ -150,9 +151,14 @@ public class BookResourceTest {
         return request;
     }
 
-    private List<Book> listBooks() {
+    private List<Book> listAllBooks() {
+        return this.listBooksByAuthor("");
+    }
+
+    private List<Book> listBooksByAuthor(String author) {
+        String query = StringUtils.isNotBlank(author) ? "?author=" + author : "";
         return given()
-                .when().get(BOOKS_PATH)
+                .when().get(BOOKS_PATH + query)
                 .then()
                 .statusCode(200)
                 .extract().body().jsonPath().getList(".", Book.class);
