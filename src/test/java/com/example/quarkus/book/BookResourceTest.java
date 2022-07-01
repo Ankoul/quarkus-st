@@ -3,6 +3,8 @@ package com.example.quarkus.book;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
+import com.example.quarkus.author.boundary.AuthorService;
+import com.example.quarkus.author.entity.Author;
 import com.example.quarkus.book.entity.Book;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,16 +12,19 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.Response;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.codehaus.plexus.util.StringUtils;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 @QuarkusTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BookResourceTest {
 
     public static final String BOOKS_PATH = "/books";
@@ -27,8 +32,11 @@ public class BookResourceTest {
     public static final String VALID_AUTHOR = "Gilson";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    @Inject
+    @RestClient
+    AuthorService authorService;
+
     @Test
-    @Order(1)
     public void listBooksShouldNeverBeNull() {
         given()
                 .when().get(BOOKS_PATH)
@@ -38,7 +46,6 @@ public class BookResourceTest {
     }
 
     @Test
-    @Order(2)
     public void booksShouldBeCreatedSuccessful() throws JsonProcessingException {
         final Book request = newBookInstance();
 
@@ -65,7 +72,6 @@ public class BookResourceTest {
     }
 
     @Test
-    @Order(3)
     public void listBooksShouldNotBeEmpty() {
         final List<Book> books = listAllBooks();
 
@@ -74,7 +80,6 @@ public class BookResourceTest {
     }
 
     @Test
-    @Order(4)
     public void getShouldReturnNotFound() {
         given()
                 .when().get(BOOKS_PATH + "/999999")
@@ -83,7 +88,6 @@ public class BookResourceTest {
     }
 
     @Test
-    @Order(5)
     public void booksShouldThrowErrorForInvalidAuthor() throws JsonProcessingException {
         final Book request = newBookInstance();
         request.setAuthor(VALID_AUTHOR.toLowerCase());
@@ -100,25 +104,21 @@ public class BookResourceTest {
     }
 
     @Test
-    @Order(6)
     public void titleShouldNotHaveMoreThan30Characters() throws JsonProcessingException {
         assertThatOnlyValidTitleIsAccepted(RandomStringUtils.randomAlphabetic(31));
     }
 
     @Test
-    @Order(7)
     public void titleShouldNotBeNull() throws JsonProcessingException {
         assertThatOnlyValidTitleIsAccepted(null);
     }
 
     @Test
-    @Order(8)
     public void titleShouldNotBeEmpty() throws JsonProcessingException {
         assertThatOnlyValidTitleIsAccepted("");
     }
 
     @Test
-    @Order(9)
     public void titleShouldNotBeBlank() throws JsonProcessingException {
         assertThatOnlyValidTitleIsAccepted("    ");
     }
@@ -134,6 +134,8 @@ public class BookResourceTest {
 
         request.setTitle(VALID_TITLE);
         createBook(request);
+        books = listAllBooks();
+
         final Book book = books.stream().findAny().orElseThrow();
         book.setTitle(invalidTitle);
 
@@ -142,6 +144,30 @@ public class BookResourceTest {
         books = listAllBooks();
 
         Assertions.assertTrue(books.stream().noneMatch(it -> it.getTitle().equals(invalidTitle)));
+    }
+
+    @Test
+    public void listBooksByAuthorShouldMergeWithExternalService() throws JsonProcessingException {
+        final Book book = newBookInstance();
+        createBook(book);
+        final String authorName = book.getAuthor();
+
+        final List<Book> expectedBooks = findExternalBooksByAuthorName(authorName);
+        expectedBooks.add(book);
+        final List<Book> returnedBooks = listBooksByAuthor(authorName);
+
+        final boolean allMatch = expectedBooks.stream()
+                .allMatch(book1 -> returnedBooks.stream().anyMatch(it -> it.equals(book1)));
+        Assertions.assertTrue(allMatch);
+        Assertions.assertEquals(expectedBooks.size(), returnedBooks.size());
+    }
+
+    private List<Book> findExternalBooksByAuthorName(final String authorName) {
+        final Author author =
+                authorService.listAuthors().stream()
+                        .filter(it -> it.getName().equals(authorName))
+                        .findAny().orElseThrow();
+        return authorService.listBooksByAuthorId(author.getId());
     }
 
     private Book newBookInstance() {
